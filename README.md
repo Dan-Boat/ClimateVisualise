@@ -1,26 +1,25 @@
 # ClimateVisualize 
-plot_options.py
+@daniel.boateng@uni-tuebingen.de (don't hesitate to contact me for more information)
 
-This script contains all the required specifications required for visualizing 
-global simulation output or reanalysis dataset.Please contact the author for more information if necessary
---------------------------------------------------------------
-1. directories to input datasets and for output figure -(str)
-2. setting projection, variable(eg. Temperature) and limit of dataset(must be the same for 
-   positive and negative values) for the background plot: Projection must be 
-   available from cartopy package (default is PlateCarre())
-3. Defining title of plot, output file name and format (eg. pdf, svg)
+This scripts contain functions required for visualizing global climate simulation dataset or reanalysis dataset using python.
+To use this scripts, the following python packages must be installed on your python environment
+-xarray, pandas, numpy, matplotlib, cartopy and their dependencies 
 
-plot_utils.py 
 
-This script contains all the functions for computing the long-term annual means and monthly differences
+The module contains four different files (which might change for future development)
 
-1. loading data
-2. extracting variables
-3. converting units 
-4. averaging for annual mean
-5. annual and monthly difference
-6. Function for generating the backgroud of plotting - projection, add boarderlines, coords formatter etc
+plot_long_term_difference.py - contain the function for plotting the long-term annual and monthly difference for specific variable
 
-plot_long_term_mean.py
+plot_long_term_mean.py - contain the functions for generating the plot for annual and monthly long-term means 
 
-Contains functions for generating annual and monthly long-term averages
+plot_utils.py - contains the funtions for displaying required domian (global, Africa, Europe etc) and also extracts the define variable like Temperature or Precipitation  and contains all the necessary computations needed
+
+plot_options - contains the input variables that must be specified by the user (check the script for details)
+
+Steps to use this module 
+-------------------------
+1. Edit the plot_option.py by defining the directory to the datasets for plotting (check the comments for every variable to advise yourself), variable to be plotted, domian name , plotting type (Average or Difference) and the projection if required. The plot title, colorbar label and format for saving the data must be defined if necessary
+2. Run the plot_long_term_mean or plot_long_term_difference.py  depending on Average or Difference plotting type---this might change with argument parser when calling from a command line 
+3. Check the defined plot_path for generated plots 
+
+
