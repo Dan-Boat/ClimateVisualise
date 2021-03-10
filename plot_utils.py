@@ -20,6 +20,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib as mpl
 import matplotlib.patches as mpatches
+import matplotlib.colors as colors
 import cartopy.crs as ccrs
 import cartopy.feature as cfeature
 from cartopy.mpl.gridliner import LATITUDE_FORMATTER, LONGITUDE_FORMATTER
@@ -137,7 +138,7 @@ def plot_background(p, domain=None):
     """
     p.axes.set_global()                    # setting global axis 
     p.axes.coastlines(resolution = "50m")  # add coastlines outlines to the current axis
-    p.axes.add_feature(cfeature.BORDERS, color="balck", aplha =1, linewidth = 0.5) #adding country boarder lines
+    p.axes.add_feature(cfeature.BORDERS, color="black", linewidth = 0.5) #adding country boarder lines
     
     #setting domain size
     if domain is not None: 
@@ -147,11 +148,11 @@ def plot_background(p, domain=None):
             minLat = 35
             maxLat = 65
         elif domain == "South America":   # South America
-            minLon = -80
-            maxLon = -60
-            minLat = -50
-            maxLat = -5
-        elif domain == "Tibetan Plateau" | domain == "Himalayas":  #Tibet Plateau/Himalayas
+            minLon = -85
+            maxLon = -30
+            minLat = -60
+            maxLat = 15
+        elif domain == "Tibetan Plateau" or domain == "Himalayas":  #Tibet Plateau/Himalayas
             minLon = 40
             maxLon = 120
             minLat = 0
@@ -174,7 +175,7 @@ def plot_background(p, domain=None):
         elif domain == "Africa":  # Africa
             minLon = -30
             maxLon = 55
-            minLat = -30
+            minLat = -35
             maxLat = 40
         elif domain == "New Zealand":  # New Zealand 
             minLon = 165
@@ -194,20 +195,38 @@ def plot_background(p, domain=None):
         
     # adding gridlines    
     gl= p.axes.gridlines(crs = ccrs.PlateCarree(), draw_labels = True, linewidth = 1,
-                     color = "gray", alpha = 0.5, linestyle = "--")
+                     color = "gray", linestyle = "--")
     
     gl.xlabels_top = False                  # labesl at top
+    gl.ylabels_right = False
     gl.xformatter = LONGITUDE_FORMATTER     # axis formatter
     gl.yformatter = LATITUDE_FORMATTER
     gl.xlabel_style = {"size": 15, "color": "black", "weight": "bold"}   #axis style 
     gl.ylabel_style = {"color": "black", "size": 15, "weight": "bold"}
     
-    return p
+    #return p
     
+class MidpointNormalize(colors.Normalize):
+    """
+    At the moment its a bug to use divergence colormap and set the colorbar range midpoint 
+    to zero if both vmax and vmin has different magnitude. This might be possible in 
+    future development in matplotlib through colors.offsetNorm(). This class was original developed 
+    by Joe Kingto and modified by Daniel Boateng. It sets the divergence color bar to a scale of 0-1 by dividing the midpoint to 0.5
+    Use this class at your own risk since its non-standard practice for quantitative data.
+    """
+    
+    def __init__(self, vmin=None, vmax=None, midpoint=None, clip=False):
+        self.midpoint = midpoint
+        colors.Normalize.__init__(self, vmin, vmax, clip)
+
+    def __call__(self, value, clip=None):
+        # I'm ignoring masked values and all kinds of edge cases to make a
+        # simple example...
+        x, y = [self.vmin, self.midpoint, self.vmax], [0, 0.5, 1]
+        return np.ma.masked_array(np.interp(value, x, y))      
             
-            
     
-    
+norm = MidpointNormalize(midpoint = center)   # must be imported to plotting functions
     
     
 
